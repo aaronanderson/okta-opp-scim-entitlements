@@ -4,12 +4,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -23,9 +17,8 @@ import org.apache.directory.scim.spec.filter.SortRequest;
 import org.apache.directory.scim.spec.filter.attribute.AttributeReference;
 import org.apache.directory.scim.spec.patch.PatchOperation;
 import org.apache.directory.scim.spec.resources.GroupMembership;
-import org.apache.directory.scim.spec.resources.GroupMembership.Type;
 import org.apache.directory.scim.spec.resources.ScimGroup;
-import org.apache.directory.scim.spec.resources.ScimUser;
+import org.apache.directory.scim.spec.resources.UserGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -38,7 +31,6 @@ import com.github.aaronanderson.okta.h2.db.DataSourceContextHolder;
 public class GroupRepository implements Repository<ScimGroup> {
 
 	private final SchemaRegistry schemaRegistry;
-	private final UserRepository userRepository;
 
 	@Autowired
 	private DataSourceContextHolder dataSourceContextHolder;
@@ -46,9 +38,8 @@ public class GroupRepository implements Repository<ScimGroup> {
 	@Autowired
 	JdbcTemplate jdbcTemplate;
 
-	public GroupRepository(SchemaRegistry schemaRegistry, UserRepository userRepository) {
+	public GroupRepository(SchemaRegistry schemaRegistry) {
 		this.schemaRegistry = schemaRegistry;
-		this.userRepository = userRepository;
 	}
 
 	@Override
@@ -118,13 +109,23 @@ public class GroupRepository implements Repository<ScimGroup> {
 		List<GroupMembership> members = jdbcTemplate.query("SELECT gm.USER_ID, u.USERNAME FROM GROUP_MEMBERS gm, USERS u WHERE gm.GROUP_ID = ? AND u.ID = gm.GROUP_ID", (rs2, ri2) -> {
 			GroupMembership member = new GroupMembership();
 			member.setValue(rs2.getString(1));
-			member.setType(Type.USER);
+			member.setType(GroupMembership.Type.USER);
 			member.setDisplay(rs2.getString(2));
 			return member;
 		}, rs.getString(1));
 
 		scimGroup.setMembers(members);
 		return scimGroup;
+	}
+
+	public List<UserGroup> getUserGroups(String userId) {
+		return jdbcTemplate.query("SELECT gm.GROUP_ID, g.NAME FROM GROUP_MEMBERS gm, GROUPS g WHERE gm.USER_ID = ? AND g.ID = gm.GROUP_ID", (rs2, ri2) -> {
+			UserGroup group = new UserGroup();
+			group.setValue(rs2.getString(1));
+			group.setDisplay(rs2.getString(2));
+			group.setType(UserGroup.Type.DIRECT);
+			return group;
+		}, userId);
 	}
 
 	@Override

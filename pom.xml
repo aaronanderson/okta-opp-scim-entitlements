@@ -14,7 +14,8 @@
 	<artifactId>okta-opp-scim-entitlements</artifactId>
 	<version>1.0.0</version>
 	<name>okta-opp-scim-entitlements</name>
-	<description>Okta On-Premises Provisioning SCIM 2.0 with entitlements example using Apache SCIMple and Spring Boot</description>
+	<description>Okta On-Premises Provisioning SCIM 2.0 with entitlements
+		example using Apache SCIMple and Spring Boot</description>
 	<properties>
 		<java.version>17</java.version>
 		<start-class>com.github.aaronanderson.okta.h2.H2Connector</start-class>
@@ -50,7 +51,6 @@
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
@@ -77,6 +77,14 @@
 		</dependency>
 
 
+		<!-- test dependencies -->
+		<dependency>
+			<groupId>org.apache.directory.scimple</groupId>
+			<artifactId>scim-client</artifactId>
+			<version>1.0.0-M1</version>
+			<scope>test</scope>
+		</dependency>
+		
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter</artifactId>
@@ -101,7 +109,7 @@
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>			
+				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>

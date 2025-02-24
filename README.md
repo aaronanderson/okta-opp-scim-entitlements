@@ -176,6 +176,8 @@ SSH from the host to the guest
 
 1. SCIM 2.0 push groups are not working. When activating the push group Okta generates an error for a missing SCIM 1.1 namespace.
 
+1. All entitlements are defined as multivalued arrays. Entitlements cannot be updated after provisioning is enabled.
+
 # References
 
 1. [Build a SCIM 2.0 server with entitlements](https://developer.okta.com/docs/guides/scim-with-entitlements/main/)
